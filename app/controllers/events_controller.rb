@@ -15,7 +15,6 @@ class EventsController < ApplicationController
   def create
     event = create_event(
       summary: params[:summary],
-      # location: params[:location],
       time_zone: params[:time_zone],
       description: params[:description],
       start_time: DateTime.parse(params[:start_time]),
@@ -50,6 +49,19 @@ class EventsController < ApplicationController
     render json: { message: "Event deleted" }
   end
 
+  # PUT /events/:id/sync_event_with_google
+  def sync_event_with_google
+    event = Event.find(params[:id])
+    google_event = google_calendar_service.get_event('primary', event.google_event_id)
+    event.update(
+      summary: google_event.summary,
+      description: google_event.description,
+      start_time: google_event.start.date_time,
+      end_time: google_event.end.date_time
+    )
+    render json: { message: "Event synced with Google" }
+  end
+
   private
 
   def google_calendar_service
@@ -68,7 +80,6 @@ class EventsController < ApplicationController
     service = google_calendar_service
     event = Google::Apis::CalendarV3::Event.new(
       summary:,
-      # location:,
       description:,
       start: Google::Apis::CalendarV3::EventDateTime.new(date_time: start_time, time_zone:),
       end: Google::Apis::CalendarV3::EventDateTime.new(date_time: end_time, time_zone:),

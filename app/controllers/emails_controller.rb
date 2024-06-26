@@ -8,7 +8,8 @@ class EmailsController < ApplicationController
   # GET /emails/:id
   def show
     email = google_gmail_service.get_user_message('me', params[:id])
-    render json: { id: email.id, snippet: email.snippet }
+    threads = google_gmail_service.get_user_thread('me', email.thread_id)
+    render json: { id: email.id, snippet: email.snippet, thread: threads.messages.map { |message| { id: message.id, snippet: message.snippet, body: message.payload.parts.second&.body } } }
   end
 
   # POST /emails

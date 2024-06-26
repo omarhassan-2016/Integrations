@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   # root "articles#index"
   get '/auth/google', to: 'auth_session#google_oauth'
   get '/auth/google/callback', to: 'auth_session#google_callback'
-  resources :events
+  resources :events do
+    put :sync_event_with_google, on: :member
+  end
+
   resources :emails
 end
