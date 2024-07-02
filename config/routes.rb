@@ -4,7 +4,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
   get '/auth/google', to: 'auth_session#google_oauth'
+  get '/auth/zoom', to: 'auth_session#zoom_oauth'
   get '/auth/google/callback', to: 'auth_session#google_callback'
+  get '/auth/zoom/callback', to: 'auth_session#zoom_callback'
   resources :events do
     put :sync_event_with_google, on: :member
   end
